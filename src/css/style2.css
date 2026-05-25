@@ -1,0 +1,449 @@
+#editor-page-root {
+    --primary-purple: #9b59ff;
+    --dark-purple: #7a3ee0;
+    --bg-light: #f8f9fc;
+    --text-dark: #1e293b;
+    --border-color: #e2e8f0;
+    --bg-light-purple: #f3ebff;
+    
+    margin: 0;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    min-height: 112vh;
+    width: 100%;
+}
+
+#editor-page-root .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 60px;
+    background: white;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+#editor-page-root .logo { 
+    font-weight: 800; 
+    font-size: 1.6rem; 
+    color: var(--text-dark); 
+    display: flex; 
+    align-items: center; 
+    gap: 5px; 
+}
+
+#editor-page-root .logo .badge { 
+    font-size: 0.7rem; 
+    background: var(--bg-light-purple); 
+    color: var(--primary-purple); 
+    padding: 2px 6px; 
+    border-radius: 4px; 
+    text-transform: uppercase; 
+}
+
+#editor-page-root .navbar nav a,
+#editor-page-root .navbar nav .nav-link { 
+    text-decoration: none; 
+    color: #64748b; 
+    font-weight: 500; 
+    margin: 0 15px; 
+    transition: color 0.2s; 
+}
+
+#editor-page-root .navbar nav a.active, 
+#editor-page-root .navbar nav a:hover,
+#editor-page-root .navbar nav .nav-link.active,
+#editor-page-root .navbar nav .nav-link:hover { 
+    color: var(--primary-purple); 
+}
+
+#editor-page-root .nav-right { 
+    display: flex; 
+    align-items: center; 
+    gap: 20px; 
+    color: #64748b; 
+    font-size: 0.9rem; 
+}
+
+#editor-page-root .btn-primary { 
+    background: var(--primary-purple); 
+    color: white; 
+    border: none; 
+    padding: 10px 20px; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    font-weight: 600; 
+    transition: background 0.2s; 
+}
+
+#editor-page-root .btn-primary:hover { 
+    background: var(--dark-purple); 
+}
+
+#editor-page-root .viewer-section {
+    background: radial-gradient(circle at 50% 50%, #ffffff 0%, #d1d9e6 100%);
+    border-radius: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 100px rgba(0,0,0,0.03), 0 20px 60px rgba(155, 89, 255, 0.05);
+    border: 2px solid #fff;
+}
+
+#editor-page-root .blend-multiply { 
+    mix-blend-mode: multiply; 
+}
+
+#editor-page-root #logo-reflejado-container {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 95%; 
+    max-height: 95%;
+    box-sizing: border-box;
+}
+
+#editor-page-root #diseno-reflejado-img {
+    width: 100%;
+    height: 100%;
+    opacity: 0.9;
+    object-fit: contain;
+}
+
+#editor-page-root #texto-reflejado-container {
+    position: absolute;
+    z-index: 3;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+#editor-page-root #texto-reflejado-visor {
+    width: 100%;
+    word-break: break-word;
+    line-height: 1.2;
+}
+
+#editor-page-root #text-on-canvas {
+    width: 100%;
+    text-align: center;
+    word-break: break-word;
+    user-select: none;
+    line-height: 1.2;
+}
+
+#editor-page-root .editor-container {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 30px;
+    padding: 40px;
+    max-width: 1600px;
+    margin: auto;
+    height: calc(100vh - 80px);
+}
+
+#editor-page-root .visor-mockup {
+    width: 90%;
+    height: 90%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#editor-page-root .mockup-layers {
+    position: relative;
+    max-width: 85%;
+    max-height: 85%;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#editor-page-root #prenda-base {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 15px 30px rgba(0,0,0,0.08));
+    z-index: 1;
+    background-color: transparent !important; /* Forza a eliminar el fondo blanco */
+}
+
+#editor-page-root .smart-guide {
+    position: absolute;
+    background-color: var(--primary-purple);
+    display: none;
+    z-index: 5;
+    pointer-events: none;
+}
+#editor-page-root .smart-guide.horizontal { width: 100%; height: 1px; top: 50%; border-top: 1px dotted var(--primary-purple); }
+#editor-page-root .smart-guide.vertical { height: 100%; width: 1px; left: 50%; border-left: 1px dotted var(--primary-purple); }
+
+#editor-page-root .visor-controls {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 10px 15px;
+    border-radius: 100px;
+    display: flex;
+    gap: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    z-index: 10;
+}
+
+#editor-page-root .visor-controls button {
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: #64748b;
+    padding: 10px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s;
+}
+
+#editor-page-root .active-view { 
+    background: var(--primary-purple) !important; 
+    color: white !important; 
+}
+
+#editor-page-root .controls-panel {
+    background: white;
+    border-radius: 24px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+    border: 1px solid var(--border-color);
+}
+
+#editor-page-root .panel-header { display: flex; justify-content: space-between; align-items: center; }
+#editor-page-root .action-icons { display: flex; gap: 10px; color: #94a3b8; }
+
+#editor-page-root .workspace-2d {
+    background-color: white;
+    background-image: linear-gradient(45deg, #f1f5f9 25%, transparent 25%), linear-gradient(-45deg, #f1f5f9 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #f1f5f9 75%), linear-gradient(-45deg, transparent 75%, #f1f5f9 75%);
+    background-size: 20px 20px;
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+}
+
+#editor-page-root .pattern-canvas {
+    width: 100%;  
+    height: 100px; 
+    background: white;
+    position: relative;
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#editor-page-root .draggable-item {
+    position: absolute;
+    cursor: move;
+    border: 2px dashed var(--primary-purple);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+#editor-page-root .draggable-item img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: contain; 
+    display: block; 
+    pointer-events: none; 
+}
+
+#editor-page-root .resize-handle { 
+    position: absolute; 
+    width: 10px; height: 10px; 
+    background: white; 
+    border: 2px solid var(--primary-purple); 
+    border-radius: 50%; 
+}
+#editor-page-root .top-left { top: -6px; left: -6px; cursor: nw-resize; }
+#editor-page-root .top-right { top: -6px; right: -6px; cursor: ne-resize; }
+#editor-page-root .bottom-left { bottom: -6px; left: -6px; cursor: sw-resize; }
+#editor-page-root .bottom-right { bottom: -6px; right: -6px; cursor: se-resize; }
+
+#editor-page-root .input-moderno {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+#editor-page-root .text-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#editor-page-root .text-row select {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+}
+
+#editor-page-root .text-row input[type="color"] {
+    width: 45px;
+    height: 38px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    background: none;
+    padding: 0;
+}
+
+#editor-page-root .circle { width: 35px; height: 35px; border-radius: 50%; border: 3px solid #e2e8f0; cursor: pointer; transition: 0.2s; }
+#editor-page-root .circle.white { background-color: #ffffff; }
+#editor-page-root .circle.black { background-color: #111; }
+#editor-page-root .circle.active { border-color: var(--primary-purple); transform: scale(1.1); }
+#editor-page-root .circles { display: flex; gap: 10px; }
+
+#editor-page-root .footer-buttons { display: flex; gap: 10px; margin-top: auto; }
+#editor-page-root .btn-download { flex: 1; background: #1e293b; color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+/* MODALES MEJORADOS */
+#editor-page-root .modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#editor-page-root .modal-content {
+    background: white;
+    width: 90%;
+    max-width: 600px;
+    padding: 30px;
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+}
+
+#editor-page-root .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+#editor-page-root .close-modal { cursor: pointer; color: #94a3b8; }
+
+#editor-page-root .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+#editor-page-root .gallery-item { background: var(--bg-light); border-radius: 12px; padding: 10px; text-align: center; }
+#editor-page-root .gallery-item img { width: 100%; border-radius: 8px; }
+
+#editor-page-root .user-info { 
+    position: relative;
+    display: flex; 
+    align-items: center; 
+    gap: 15px; 
+    background: var(--bg-light-purple); 
+    padding: 20px; 
+    border-radius: 15px; 
+    margin-bottom: 20px; 
+}
+
+#editor-page-root .avatar { width: 50px; height: 50px; background: var(--primary-purple); color: white; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; font-size: 1.2rem; }
+#editor-page-root .btn-logout { position: absolute; right: 15px; top: 15px; background: transparent; border: none; color: #ef4444; cursor: pointer; }
+
+#editor-page-root #nombre-usuario[contenteditable="true"] {
+    background: white;
+    padding: 2px 5px;
+    border-radius: 4px;
+    border: 1px solid var(--primary-purple);
+    outline: none;
+}
+
+#editor-page-root .saved-logos { display: flex; gap: 10px; }
+#editor-page-root .mini-logo { width: 60px; height: 60px; border: 1px solid var(--border-color); border-radius: 8px; cursor: pointer; }
+#editor-page-root .upload-placeholder { width: 60px; height: 60px; border: 2px dashed var(--border-color); display: flex; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; color: #94a3b8; }
+
+/* Notificación flotante */
+#editor-page-root .notificacion-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #1e293b;
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    border-left: 5px solid #9b59ff;
+    animation: slideIn2 0.3s ease forwards;
+}
+
+@keyframes slideIn2 {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* ==========================================================================
+   NUEVOS ESTILOS AGREGADOS PARA BOTONES DE MOVIMIENTO Y GALERÍA REAL
+   ========================================================================== */
+
+/* Estilos de botones de posición del diseño (Área 2D) y herramientas */
+#editor-page-root .workspace-2d button,
+#editor-page-root .seccion-herramientas button {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+#editor-page-root .workspace-2d button:hover,
+#editor-page-root .seccion-herramientas button:hover {
+    background: var(--primary-purple);
+    color: white;
+    border-color: var(--primary-purple);
+}
+
+/* Efecto hover en el ícono de eliminar de Lucide (Trash2) */
+#editor-page-root svg[title="Eliminar Personalización"]:hover {
+    transform: scale(1.15);
+    transition: transform 0.2s;
+}
+
+/* Estilos extras para las miniaturas cargadas dentro del visor */
+#editor-page-root .mockup-layers div img {
+    object-fit: contain;
+    user-select: none;
+}
