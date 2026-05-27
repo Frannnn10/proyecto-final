@@ -23,9 +23,15 @@ dist-ssr
 *.sln
 *.sw?
 
-# Archivos de entorno
+# Dependencias
+node_modules/
+
+# Entorno y credenciales
 .env
 
-# Dependencias (ejemplo para Node.js)
-node_modules/
+# Archivos de construcción (build)
+dist/
+
+# Sistema operativo
+.DS_Store
 

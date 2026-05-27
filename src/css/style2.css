@@ -447,3 +447,10 @@
     object-fit: contain;
     user-select: none;
 }
+
+/* Añade esto a tu archivo CSS para descartar el problema de altura */
+.editor-container {
+    min-height: 100vh;
+    display: block;
+    background-color: #f9f9f9;
+}

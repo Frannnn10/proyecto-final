@@ -10,11 +10,13 @@ function Registro() {
   const handleRegistro = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:3000/api/registrar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(datos)
-      });
+
+    // Asegúrate que apunte a /api/registrar y NO a /api/login
+    const res = await fetch('/api/registrar', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(datos) // Asegúrate que 'datos' tenga nombre, correo y contrasena
+});
       const data = await res.json();
 
       if (data.success) {

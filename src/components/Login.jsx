@@ -12,22 +12,24 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:3000/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(datos)
-      });
+
+    const res = await fetch('/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(datos)
+});
       const data = await res.json();
 
       if (data.success) {
-        login(data.user);
+        // Pasamos el usuario y el token que viene del servidor
+        login(data.user, data.token); 
         toast.success("Bienvenido");
         navigate('/');
       } else {
         toast.error(data.message || "Usuario o contraseña incorrectos");
       }
     } catch (error) {
-      console.error(error); // Esto usa la variable y te ayuda a ver el problema en consola
+      console.error(error);
       toast.error("Error: " + error.message); 
     }
   };

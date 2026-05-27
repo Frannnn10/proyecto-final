@@ -1,14 +1,15 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 
-export const ProtectedRoute = ({ children }) => {
-  const { usuario } = useAuth();
-  
-  // Si no hay usuario, redirige al login
+const ProtectedRoute = ({ children }) => {
+  const { usuario, cargando } = useAuth();
+
+  // Si aún está cargando, no redirijas todavía
+  if (cargando) return <div>Cargando...</div>;
+
   if (!usuario) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" replace />;
   }
   
-  // Si hay usuario, muestra el contenido (el editor)
   return children;
 };

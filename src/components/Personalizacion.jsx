@@ -6,12 +6,23 @@ import "../css/style2.css";
 function Personalizacion() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  
+  // CAMBIA ESTA URL POR TU DOMINIO REAL
+  const API_URL = "http://localhost:3000";
+
+  // --- Estado para el Toast ---
+  const [mensajeNotificacion, setMensajeNotificacion] = useState('');
+
+  const toast = (msg) => {
+    setMensajeNotificacion(msg);
+    setTimeout(() => setMensajeNotificacion(''), 2500);
+  };
 
   // --- Protección de ruta añadida ---
   useEffect(() => {
     const usuarioLogueado = localStorage.getItem('usuario');
     if (!usuarioLogueado) {
-      alert("Debes iniciar sesión para personalizar tu prenda.");
+      toast("Debes iniciar sesión para personalizar tu prenda.");
       navigate('/login');
     }
   }, [navigate]);
@@ -34,26 +45,13 @@ function Personalizacion() {
   // Modales y Galería
   const [modalGaleria, setModalGaleria] = useState(false);
   const [modalCuenta, setModalCuenta] = useState(false);
-  const [mensajeNotificacion, setMensajeNotificacion] = useState('');
   const [galeria, setGaleria] = useState([]);
 
-  // --- Catálogo de Prendas (Mapeo limpio y sin llaves duplicadas) ---
+  // --- Catálogo de Prendas ---
   const catalogo = {
-    sudadera: {
-      frente: "/img/frente.png",
-      espalda: "/img/espalda.png",
-      label: "Sudadera"
-    },
-    gorra: {
-      frente: "/img/gorra_frente.png",
-      espalda: "/img/gorra_espalda.png",
-      label: "Gorra"
-    },
-    "t-shirt": {
-      frente: "/img/t-shirt_frente.png",
-      espalda: "/img/t-shirt_espalda.png",
-      label: "T-Shirt"
-    }
+    sudadera: { frente: "/img/frente.png", espalda: "/img/espalda.png", label: "Sudadera" },
+    gorra: { frente: "/img/gorra_frente.png", espalda: "/img/gorra_espalda.png", label: "Gorra" },
+    "t-shirt": { frente: "/img/t-shirt_frente.png", espalda: "/img/t-shirt_espalda.png", label: "T-Shirt" }
   };
 
   const prenda = catalogo[tipoPrenda] || catalogo.sudadera;
@@ -76,12 +74,7 @@ function Personalizacion() {
     toast('Diseño eliminado por completo');
   };
 
-  const toast = (msg) => {
-    setMensajeNotificacion(msg);
-    setTimeout(() => setMensajeNotificacion(''), 2500);
-  };
-
-  // --- Nueva lógica para subir archivos al servidor con Multer ---
+  // --- Lógica subida de archivos ---
   const subirLogo = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -90,13 +83,12 @@ function Personalizacion() {
     formData.append('logo', file);
 
     try {
-      const res = await fetch('http://localhost:3000/api/upload', {
+      const res = await fetch(`${API_URL}/api/upload`, {
         method: 'POST',
         body: formData
       });
       const data = await res.json();
       if (data.success) {
-        // Asumiendo que tu servidor sirve la carpeta 'public' en la raíz
         setLogoSrc(data.url);
         toast('Imagen subida al servidor');
       } else {
@@ -109,10 +101,9 @@ function Personalizacion() {
   };
 
   const guardarEnGaleria = async () => {
-    // 1. Obtenemos la fecha actual
+    const token = localStorage.getItem('token');
     const fechaActual = new Date().toISOString();
 
-    // 2. Preparamos el objeto (ajustado a las columnas de tu BD)
     const nuevo = {
       tipo: prenda.label,
       texto: textoVisor,
@@ -124,12 +115,11 @@ function Personalizacion() {
     };
 
     try {
-      // 3. Enviamos al servidor
-      const res = await fetch('http://localhost:3000/api/proyectos', {
+      const res = await fetch(`${API_URL}/api/proyectos`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer_SesionActiva' 
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(nuevo)
       });
@@ -138,13 +128,13 @@ function Personalizacion() {
 
       if (data.success) {
         setGaleria([...galeria, { ...nuevo, id: Date.now(), imagenMockup: vistaFrente ? prenda.frente : prenda.espalda }]);
-        toast.success('¡Proyecto guardado en la base de datos!');
+        toast('¡Proyecto guardado exitosamente!');
       } else {
-        toast.error('Error al guardar: ' + data.message);
+        toast('Error al guardar: ' + data.message);
       }
     } catch (err) {
       console.error(err);
-      toast.error('Error de conexión con el servidor');
+      toast('Error de conexión con el servidor');
     }
   };
 
@@ -158,10 +148,11 @@ function Personalizacion() {
 
   return (
     <div id="editor-page-root">
-      <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;700&family=Lobster&display=swap" rel="stylesheet" />
-      
+      {/* Toast Notification */}
       {mensajeNotificacion && <div className="notificacion-toast">{mensajeNotificacion}</div>}
 
+      <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;700&family=Lobster&display=swap" rel="stylesheet" />
+      
       <header className="navbar">
         <div className="logo">pacdora <span className="badge">pro</span></div>
         <nav>
@@ -257,14 +248,13 @@ function Personalizacion() {
             <button className="btn-download" onClick={descargarImagen} style={{ flex: 2, display:'flex', alignItems:'center', justifyContent:'center', gap:'8px' }}>
               <Download size={16} /> Descarga Gratis
             </button>
-            <button onClick={() => { navigator.clipboard.writeText(window.location.href); toast('¡Enlace copiado al portapapeles! 🔗'); }} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#cbd5e1', border: 'none', borderRadius: '10px', cursor: 'pointer', gap:'4px' }}>
+            <button onClick={() => { navigator.clipboard.writeText(window.location.href); toast('¡Enlace copiado!'); }} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#cbd5e1', border: 'none', borderRadius: '10px', cursor: 'pointer', gap:'4px' }}>
               <Share2 size={16} /> Compartir
             </button>
           </div>
         </aside>
       </main>
 
-      {/* MODAL DE GALERÍA */}
       {modalGaleria && (
         <div className="modal-overlay" style={{ display: 'flex', position:'fixed', top:0, left:0, width:'100vw', height:'100vh', background:'rgba(0,0,0,0.5)', justifyContent:'center', alignItems:'center', zIndex:100 }}>
           <div className="modal-content" style={{ background:'#fff', padding:'25px', borderRadius:'15px', maxWidth:'500px', width:'90%' }}>
@@ -292,7 +282,6 @@ function Personalizacion() {
         </div>
       )}
 
-      {/* MODAL DE CUENTA */}
       {modalCuenta && (
         <div className="modal-overlay" style={{ display: 'flex', position:'fixed', top:0, left:0, width:'100vw', height:'100vh', background:'rgba(0,0,0,0.5)', justifyContent:'center', alignItems:'center', zIndex:100 }}>
           <div className="modal-content" style={{ background:'#fff', padding:'25px', borderRadius:'15px', width:'350px' }}>
@@ -307,6 +296,17 @@ function Personalizacion() {
                 <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>Technical Admin</p>
               </div>
             </div>
+            <button 
+              onClick={() => {
+                localStorage.removeItem('usuario');
+                localStorage.removeItem('token');
+                toast('Sesión cerrada. Redirigiendo...');
+                setTimeout(() => navigate('/login'), 1500);
+              }}
+              style={{ width: '100%', marginTop: '20px', padding: '10px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
+            >
+              Cerrar Sesión
+            </button>
           </div>
         </div>
       )}

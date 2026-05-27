@@ -6,29 +6,36 @@ import Personalizacion from './components/Personalizacion';
 import { useAuth } from './context/AuthContext';
 
 const ProtectedRoute = ({ children }) => {
-  const { usuario } = useAuth();
+  const { usuario, cargando } = useAuth();
+  
+  // Si todavía está leyendo el localStorage, no hacemos nada (o mostramos un spinner)
+  if (cargando) return <div>Cargando sesión...</div>; 
+  
+  // Si terminó de cargar y no hay usuario, redirigimos
   if (!usuario) {
     return <Navigate to="/login" replace />;
   }
+  
   return children;
 };
 
-// NUEVO: Componente para manejar la redirección de la raíz
 const PublicRoute = ({ children }) => {
-  const { usuario } = useAuth();
-  // Si NO hay usuario, lo manda al login. Si SÍ hay, le muestra el Inicio.
-  return usuario ? children : <Navigate to="/login" replace />;
+  const { usuario, cargando } = useAuth();
+  
+  if (cargando) return <div>Cargando...</div>;
+  
+  // Corregido: Si hay usuario, normalmente irías a Inicio, no al login
+  return usuario ? <Navigate to="/" replace /> : children;
 };
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Usamos PublicRoute para proteger el acceso a la Landing Page */}
         <Route path="/" element={
-          <PublicRoute>
+          <ProtectedRoute>
             <Inicio />
-          </PublicRoute>
+          </ProtectedRoute>
         } />
         
         <Route path="/login" element={<Login />} />
